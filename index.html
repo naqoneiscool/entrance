@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>480x1080 Webサイト - APNGアニメ版</title>
+    <style>
+        /* 画面全体の設定 */
+        body { margin: 0; padding: 0; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; font-family: 'Helvetica Neue', Arial, sans-serif; }
+        
+        /* 480x1080のメイン画面 */
+        .container { width: 480px; height: 1080px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); box-sizing: border-box; position: relative; background-image: url('https://lh3.googleusercontent.com/d/1Pkej38ocZmpNi5bOlxzqbjRADWuzYl1w'); background-size: cover; background-position: center; background-repeat: no-repeat; overflow: hidden; }
+        
+        /* 時計と日付のエリア */
+        .top-half { position: absolute; top: 0; left: 0; width: 100%; height: 55%; display: flex; flex-direction: column; justify-content: center; align-items: center; color: #ffffff; text-shadow: 0 2px 6px rgba(0,0,0,0.8); padding: 0 20px; box-sizing: border-box; }
+        
+        /* 1. アナログ時計 */
+        .analog-clock { width: 330px; height: 330px; border: 6px solid #ffffff; border-radius: 50%; position: relative; background-color: rgba(255, 255, 255, 0.1); box-shadow: inset 0 0 22px rgba(0,0,0,0.3), 0 0 22px rgba(0,0,0,0.3); margin-bottom: 30px; flex-shrink: 0; }
+        .hand { position: absolute; bottom: 50%; left: 50%; transform-origin: bottom center; background-color: #ffffff; border-radius: 6px; box-shadow: 0 3px 6px rgba(0,0,0,0.4); }
+        .hour-hand { width: 12px; height: 90px; margin-left: -6px; }
+        .minute-hand { width: 7.5px; height: 127.5px; margin-left: -3.75px; }
+        .second-hand { width: 3px; height: 142.5px; margin-left: -1.5px; background-color: #ff4b4b; }
+        .center-dot { position: absolute; top: 50%; left: 50%; width: 21px; height: 21px; background-color: #ffffff; border-radius: 50%; transform: translate(-50%, -50%); box-shadow: 0 3px 6px rgba(0,0,0,0.4); }
+        
+        /* 2. デジタル時計 & 3. 日付 */
+        .digital-clock { width: 100%; text-align: center; font-size: 56px; font-weight: bold; letter-spacing: 6px; margin-bottom: 0; line-height: 1.2; }
+        .date-display { width: 100%; text-align: center; font-size: 24px; letter-spacing: 3px; margin-top: 5px; }
+
+        /* 4. 画面下部のアニメーション */
+        .bottom-animation {
+            position: absolute;
+            bottom:77px; 
+            left: 50%;
+            transform: translateX(-50%); 
+            width: 80%; 
+            max-height: 40%; 
+            object-fit: contain; 
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="top-half">
+            <div class="analog-clock">
+                <div class="hand hour-hand" id="hourHand"></div>
+                <div class="hand minute-hand" id="minuteHand"></div>
+                <div class="hand second-hand" id="secondHand"></div>
+                <div class="center-dot"></div>
+            </div>
+            <div class="digital-clock" id="timeDisplay"></div>
+            <div class="date-display" id="dateDisplay"></div>
+        </div>
+
+        <img src="animation.png" class="bottom-animation" alt="アニメーション">
+    </div>
+
+    <script>
+        function updateClock() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('timeDisplay').textContent = `${hours}:${minutes}`;
+            
+            const year = now.getFullYear();
+            const month = now.getMonth() + 1;
+            const date = now.getDate();
+            const days = ['日', '月', '火', '水', '木', '金', '土'];
+            const day = days[now.getDay()];
+            document.getElementById('dateDisplay').textContent = `${year}年${month}月${date}日 (${day})`;
+            
+            const secDeg = (now.getSeconds() / 60) * 360;
+            const minDeg = ((now.getMinutes() + now.getSeconds() / 60) / 60) * 360;
+            const hourDeg = ((now.getHours() % 12 + now.getMinutes() / 60) / 12) * 360;
+            
+            document.getElementById('secondHand').style.transform = `rotate(${secDeg}deg)`;
+            document.getElementById('minuteHand').style.transform = `rotate(${minDeg}deg)`;
+            document.getElementById('hourHand').style.transform = `rotate(${hourDeg}deg)`;
+        }
+        setInterval(updateClock, 1000); updateClock();
+    </script>
+</body>
+</html>
